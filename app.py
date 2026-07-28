@@ -2903,18 +2903,18 @@ async def mcp_discovery():
     """MCP discovery manifest — makes slacking.biz findable by AI agents."""
     return JSONResponse(content={
         "schema_version": "1.0",
-        "name": "slacking.biz — SEC Financial Data",
-        "description": "17 API endpoints + MCP server. Company health scores, financial statements, insider trades, SEC filings, industry comparisons, stock screening.",
+        "name": "slacking.biz — SEC Financial Data + US Economics + Demographics",
+        "description": "28 MCP tools across 3 categories: financial (SEC EDGAR: health scores, financial statements, insider trades, sentiment, screening), economic (FRED: GDP, CPI, rates, employment, housing), demographics (Census: ZIP/county data). No API key needed for basic access.",
         "base_url": "https://slacking.biz",
         "mcp_command": "python3",
         "mcp_script": "https://slacking.biz/static/slacking_mcp_server.py",
-        "mcp_tools": 16,
-        "auth": "X-API-Key header",
+        "mcp_tools": 28,
+        "auth": "X-API-Key header (optional for light use)",
         "pricing_url": "https://slacking.biz/upgrade",
         "signup_url": "https://slacking.biz/signup",
         "docs_url": "https://slacking.biz/mcp",
         "playground_url": "https://slacking.biz/playground",
-        "tags": ["financial-data", "sec", "stock-market", "investing", "stock-screener", "fundamentals", "mcp-server"],
+        "tags": ["financial-data", "sec", "stock-market", "investing", "stock-screener", "fundamentals", "economic-data", "demographics", "fred", "census", "mcp-server"],
         "endpoints": {
             "health": "/v1/financial/{ticker}",
             "income_statement": "/v1/financial/{ticker}/income-statement",
@@ -2933,6 +2933,14 @@ async def mcp_discovery():
             "compare": "POST /v1/financial/compare",
             "screener": "POST /v1/financial/screener",
             "batch": "POST /v1/financial/batch",
+            "gdp": "/v1/econ/gdp",
+            "inflation": "/v1/econ/inflation",
+            "rates": "/v1/econ/rates",
+            "employment": "/v1/econ/employment",
+            "housing": "/v1/econ/housing",
+            "econ_summary": "/v1/econ/summary",
+            "zip_demographics": "/v1/demo/zip/{zip_code}",
+            "county_demographics": "/v1/demo/county/{fips}"
         }
     })
 

@@ -266,6 +266,153 @@ TOOLS = {
             },
             "required": ["tickers", "endpoints"]
         }
+    },
+    # ── World Bank Tools ──
+    "worldbank_list_countries": {
+        "endpoint": "/v1/worldbank/countries",
+        "method": "GET",
+        "params": [],
+        "description": "List all available World Bank country/region codes (55+ countries and regional aggregates)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+    "worldbank_country_economics": {
+        "endpoint": "/v1/worldbank/{country_code}",
+        "method": "GET",
+        "params": ["country_code"],
+        "description": "Get key economic indicators (GDP, GDP growth, population, inflation, unemployment, trade) for any country from the World Bank",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "country_code": {"type": "string", "description": "ISO 3166-1 alpha-3 country code (e.g., USA, CHN, GBR, IND, DEU, JPN, BRA)"}
+            },
+            "required": ["country_code"]
+        }
+    },
+    "worldbank_specific_indicator": {
+        "endpoint": "/v1/worldbank/{country_code}/{indicator}",
+        "method": "GET",
+        "params": ["country_code", "indicator", "years"],
+        "description": "Get a specific World Bank indicator time-series (GDP, population, inflation, etc.) for a country",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "country_code": {"type": "string", "description": "ISO 3166-1 alpha-3 country code"},
+                "indicator": {"type": "string", "description": "Indicator key: gdp, gdp_growth, gdp_per_capita, population, inflation_cpi, unemployment, exports, imports, fdi, poverty, life_expectancy, education_expenditure"},
+                "years": {"type": "integer", "description": "Number of historical years to return", "default": 10}
+            },
+            "required": ["country_code", "indicator"]
+        }
+    },
+    "worldbank_compare_countries": {
+        "endpoint": "/v1/worldbank/summary",
+        "method": "GET",
+        "params": ["countries"],
+        "description": "Compare key economic indicators (GDP, GDP growth, population) across multiple countries",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "countries": {"type": "string", "description": "Comma-separated ISO codes, e.g., 'USA,CHN,GBR,IND,DEU,JPN,BRA'"}
+            },
+            "required": ["countries"]
+        }
+    },
+    # ── Economics Tools (FRED) ──
+    "get_gdp": {
+        "endpoint": "/v1/econ/gdp",
+        "method": "GET",
+        "params": [],
+        "description": "Get latest US GDP data from the Federal Reserve (FRED)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+    "get_inflation": {
+        "endpoint": "/v1/econ/inflation",
+        "method": "GET",
+        "params": [],
+        "description": "Get latest CPI / inflation data from the Federal Reserve (FRED)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+    "get_rates": {
+        "endpoint": "/v1/econ/rates",
+        "method": "GET",
+        "params": [],
+        "description": "Get latest Fed funds rate, mortgage rates, and treasury yields from FRED",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+    "get_employment": {
+        "endpoint": "/v1/econ/employment",
+        "method": "GET",
+        "params": [],
+        "description": "Get latest unemployment rate and jobless claims from FRED",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+    "get_housing": {
+        "endpoint": "/v1/econ/housing",
+        "method": "GET",
+        "params": [],
+        "description": "Get latest housing starts and existing home sales data from FRED",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+    "get_econ_summary": {
+        "endpoint": "/v1/econ/summary",
+        "method": "GET",
+        "params": [],
+        "description": "Get all key economic indicators (GDP, CPI, rates, employment, housing) in one call from FRED",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+    # ── Demographics Tools (Census) ──
+    "get_zip_demographics": {
+        "endpoint": "/v1/demo/zip/{zip_code}",
+        "method": "GET",
+        "params": ["zip_code"],
+        "description": "Get demographics for a ZIP code (population, income, age, housing, education) from the US Census Bureau",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "zip_code": {"type": "string", "description": "5-digit US ZIP code (e.g. '90210', '10001')"}
+            },
+            "required": ["zip_code"]
+        }
+    },
+    "get_county_demographics": {
+        "endpoint": "/v1/demo/county/{fips}",
+        "method": "GET",
+        "params": ["fips"],
+        "description": "Get county-level demographics data by FIPS code from the US Census Bureau",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "fips": {"type": "string", "description": "5-digit county FIPS code (e.g. '06037' for Los Angeles County, CA)"}
+            },
+            "required": ["fips"]
+        }
     }
 }
 
@@ -371,16 +518,15 @@ def call_api(tool, params):
         query_params = {}
         for p in tool["params"]:
             if p in params:
-                endpoint = endpoint.replace("{" + p + "}", str(params[p]))
+                # Replace path placeholders {param} in the endpoint
+                placeholder = "{" + p + "}"
+                if placeholder in endpoint:
+                    endpoint = endpoint.replace(placeholder, str(params[p]))
+                else:
+                    # No path placeholder → add as query parameter
+                    query_params[p] = params[p]
         
-        # Handle remaining query params (non-path params)
-        extra_params = [p for p in tool["params"] if p not in params]
-        for p in extra_params:
-            if p in params:
-                # Remove unfilled placeholders — they get added as query params
-                endpoint = re.sub(r'\{' + p + r'\}', '', endpoint)
-        
-        # Clean any remaining unfilled placeholders
+        # Remove any unfilled placeholders (for optional params not provided)
         endpoint = re.sub(r'\{[^}]+\}', '', endpoint)
         
         if query_params:

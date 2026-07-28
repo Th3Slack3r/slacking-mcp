@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "slacking.biz SEC Financial Data API",
-    "description": "SEC financial data for any US public company \u2014 health scores, income statements, balance sheets, cash flow, insider trades, sentiment analysis, industry comparison, filings search, and company screening. Data sourced from SEC EDGAR (10-K, 10-Q, 8-K, Form 4).",
+    "description": "SEC financial data, US economic indicators, and demographics — health scores, income statements, balance sheets, cash flow, insider trades, sentiment analysis, industry comparison, filings search, company screening, GDP, inflation, interest rates, employment, housing, ZIP code and county demographics. Data sourced from SEC EDGAR (10-K, 10-Q, 8-K, Form 4), FRED (Federal Reserve Economic Data), and US Census Bureau ACS.",
     "version": "1.0.0",
     "contact": {
       "name": "slacking.biz Support",
@@ -1013,6 +1013,126 @@
           }
         },
         "x-rapidapi-name": "Batch Query"
+      }
+    },
+    "/v1/econ/gdp": {
+      "get": {
+        "summary": "US GDP",
+        "description": "Get US GDP data — nominal GDP, real GDP, and quarterly growth rates from FRED (Federal Reserve Economic Data).",
+        "operationId": "getGdp",
+        "responses": {
+          "200": {
+            "description": "GDP data"
+          }
+        }
+      }
+    },
+    "/v1/econ/inflation": {
+      "get": {
+        "summary": "US Inflation / CPI",
+        "description": "Get US CPI / inflation data — Consumer Price Index from the Bureau of Labor Statistics.",
+        "operationId": "getInflation",
+        "responses": {
+          "200": {
+            "description": "Inflation / CPI data"
+          }
+        }
+      }
+    },
+    "/v1/econ/rates": {
+      "get": {
+        "summary": "US Interest Rates",
+        "description": "Get US interest rates — Federal Funds rate, 30-year mortgage rate, and 10-year Treasury yield.",
+        "operationId": "getRates",
+        "responses": {
+          "200": {
+            "description": "Interest rate data"
+          }
+        }
+      }
+    },
+    "/v1/econ/employment": {
+      "get": {
+        "summary": "US Employment",
+        "description": "Get US employment data — unemployment rate and initial jobless claims.",
+        "operationId": "getEmployment",
+        "responses": {
+          "200": {
+            "description": "Employment data"
+          }
+        }
+      }
+    },
+    "/v1/econ/housing": {
+      "get": {
+        "summary": "US Housing",
+        "description": "Get US housing market data — housing starts and mortgage rates.",
+        "operationId": "getHousing",
+        "responses": {
+          "200": {
+            "description": "Housing data"
+          }
+        }
+      }
+    },
+    "/v1/econ/summary": {
+      "get": {
+        "summary": "Economic Summary",
+        "description": "Get ALL key US economic indicators in one call — GDP, CPI, Fed funds rate, unemployment, housing, mortgage rates, treasury yields, jobless claims.",
+        "operationId": "getEconSummary",
+        "responses": {
+          "200": {
+            "description": "All economic indicators"
+          }
+        }
+      }
+    },
+    "/v1/demo/zip/{zip_code}": {
+      "get": {
+        "summary": "ZIP Code Demographics",
+        "description": "Get demographics for a ZIP code — population, median income, median age, housing units, median home value, median rent, and education levels from US Census Bureau ACS.",
+        "operationId": "getZipDemographics",
+        "parameters": [
+          {
+            "name": "zip_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "5-digit US ZIP code (e.g., 90210, 10001)",
+            "example": "90210"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ZIP code demographics"
+          }
+        }
+      }
+    },
+    "/v1/demo/county/{fips}": {
+      "get": {
+        "summary": "County Demographics",
+        "description": "Get county-level demographics by FIPS code — population, median income, median age, housing units, median home value, median rent, and education levels from US Census Bureau ACS.",
+        "operationId": "getCountyDemographics",
+        "parameters": [
+          {
+            "name": "fips",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "5-digit county FIPS code (e.g., 06037 for Los Angeles County, 17031 for Cook County)",
+            "example": "06037"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "County demographics"
+          }
+        }
       }
     }
   },

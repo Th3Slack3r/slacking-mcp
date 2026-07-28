@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.th3slack3r/slacking-biz",
-  "title": "Slacking.biz SEC Financial Data",
-  "description": "SEC EDGAR financial data — 16 MCP tools for company research, financials, insider trades, filings.",
-  "version": "1.0.0",
+  "name": "io.github.Th3Slack3r/slacking-biz",
+  "title": "Slacking.biz — SEC Financial Data + US Economics + Demographics",
+  "description": "28 MCP tools: SEC financials, FRED economics, Census demographics.",
+  "version": "1.1.0",
   "remotes": [
     {
       "url": "https://slacking.biz/mcp",
@@ -11,7 +11,7 @@
     }
   ],
   "categories": ["finance", "data"],
-  "tags": ["sec", "edgar", "financial-data", "stock-market", "insider-trading", "company-research"],
+  "tags": ["sec", "edgar", "financial-data", "stock-market", "economic-data", "fred", "census", "demographics", "insider-trading", "company-research"],
   "websiteUrl": "https://slacking.biz",
   "documentationUrl": "https://slacking.biz/docs"
 }

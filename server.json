@@ -1,0 +1,17 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.th3slack3r/slacking-biz",
+  "title": "Slacking.biz SEC Financial Data",
+  "description": "SEC EDGAR financial data — 16 MCP tools for company research, financials, insider trades, filings.",
+  "version": "1.0.0",
+  "remotes": [
+    {
+      "url": "https://slacking.biz/mcp",
+      "type": "streamable-http"
+    }
+  ],
+  "categories": ["finance", "data"],
+  "tags": ["sec", "edgar", "financial-data", "stock-market", "insider-trading", "company-research"],
+  "websiteUrl": "https://slacking.biz",
+  "documentationUrl": "https://slacking.biz/docs"
+}

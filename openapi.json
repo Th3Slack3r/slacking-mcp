@@ -1,0 +1,1024 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "slacking.biz SEC Financial Data API",
+    "description": "SEC financial data for any US public company \u2014 health scores, income statements, balance sheets, cash flow, insider trades, sentiment analysis, industry comparison, filings search, and company screening. Data sourced from SEC EDGAR (10-K, 10-Q, 8-K, Form 4).",
+    "version": "1.0.0",
+    "contact": {
+      "name": "slacking.biz Support",
+      "email": "admin@tsn.pw",
+      "url": "https://slacking.biz"
+    },
+    "x-logo": {
+      "url": "https://slacking.biz/logo.png"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://slacking.biz",
+      "description": "Production API"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authentication. Get yours at https://slacking.biz"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      },
+      "CompanyHealth": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "example": "AAPL"
+          },
+          "company_name": {
+            "type": "string",
+            "example": "Apple Inc."
+          },
+          "health_score": {
+            "type": "number",
+            "example": 70.0
+          },
+          "grade": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "F"
+            ],
+            "example": "B"
+          },
+          "interpretation": {
+            "type": "string"
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "revenue": {
+                "type": "number"
+              },
+              "net_income": {
+                "type": "number"
+              },
+              "profit_margin": {
+                "type": "number"
+              },
+              "operating_margin": {
+                "type": "number"
+              },
+              "gross_margin": {
+                "type": "number"
+              },
+              "debt_ratio": {
+                "type": "number"
+              },
+              "debt_to_equity": {
+                "type": "number"
+              },
+              "current_ratio": {
+                "type": "number"
+              },
+              "return_on_assets": {
+                "type": "number"
+              },
+              "return_on_equity": {
+                "type": "number"
+              },
+              "cash_ratio": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "CompanyProfile": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "cik": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sic": {
+            "type": "string"
+          },
+          "sic_description": {
+            "type": "string"
+          },
+          "business_address": {
+            "type": "string"
+          },
+          "mailing_address": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          },
+          "employees": {
+            "type": "number"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "FinancialStatement": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "company_name": {
+            "type": "string"
+          },
+          "statement_type": {
+            "type": "string"
+          },
+          "cik": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "concept": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "fiscal_year": {
+                  "type": "integer"
+                },
+                "fiscal_period": {
+                  "type": "string"
+                },
+                "end_date": {
+                  "type": "string",
+                  "format": "date"
+                }
+              }
+            }
+          }
+        }
+      },
+      "InsiderTrades": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "insider_transactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "insider_name": {
+                  "type": "string"
+                },
+                "relationship": {
+                  "type": "string"
+                },
+                "transaction_type": {
+                  "type": "string"
+                },
+                "shares_traded": {
+                  "type": "number"
+                },
+                "price_per_share": {
+                  "type": "number"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "shares_held": {
+                  "type": "number"
+                },
+                "transaction_date": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "FinancialTrends": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "company_name": {
+            "type": "string"
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "trends": {
+            "type": "object",
+            "properties": {
+              "revenue": {
+                "type": "object",
+                "properties": {
+                  "direction": {
+                    "type": "string"
+                  },
+                  "change_pct": {
+                    "type": "number"
+                  }
+                }
+              },
+              "net_income": {
+                "type": "object",
+                "properties": {
+                  "direction": {
+                    "type": "string"
+                  },
+                  "change_pct": {
+                    "type": "number"
+                  }
+                }
+              },
+              "profit_margin": {
+                "type": "object",
+                "properties": {
+                  "direction": {
+                    "type": "string"
+                  },
+                  "change_pct": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "IndustryComparison": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "company_name": {
+            "type": "string"
+          },
+          "sic": {
+            "type": "string"
+          },
+          "sic_description": {
+            "type": "string"
+          },
+          "peer_count": {
+            "type": "integer"
+          },
+          "comparison": {
+            "type": "object"
+          }
+        }
+      },
+      "SentimentAnalysis": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "filing_type": {
+            "type": "string"
+          },
+          "overall_sentiment": {
+            "type": "string"
+          },
+          "sentiment_score": {
+            "type": "number"
+          },
+          "positive_signals": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "negative_signals": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "neutral_signals": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "risk_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FilingTypes": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "company_name": {
+            "type": "string"
+          },
+          "total_filings": {
+            "type": "integer"
+          },
+          "by_category": {
+            "type": "object"
+          }
+        }
+      },
+      "FilingsSearch": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "filings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "string"
+                },
+                "filing_date": {
+                  "type": "string"
+                },
+                "period_of_report": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "filing_url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BatchQuery": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "ScreenerResults": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ticker": {
+                  "type": "string"
+                },
+                "company_name": {
+                  "type": "string"
+                },
+                "health_score": {
+                  "type": "number"
+                },
+                "grade": {
+                  "type": "string"
+                },
+                "metrics": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/financial/{ticker}": {
+      "get": {
+        "summary": "Company Financial Health",
+        "description": "Get a company's overall financial health score (A-F grade) including summary metrics: revenue, net income, profit margins, debt ratios, and more.",
+        "operationId": "getCompanyHealth",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Stock ticker symbol (e.g. AAPL, MSFT, TSLA)",
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company health score and metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyHealth"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ticker not found"
+          }
+        },
+        "x-rapidapi-name": "Company Health"
+      }
+    },
+    "/v1/financial/{ticker}/trends": {
+      "get": {
+        "summary": "Financial Trends",
+        "description": "Get financial trends over time for a company \u2014 revenue, profit, margins across reporting periods with direction and change percentages.",
+        "operationId": "getTrends",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Financial trends",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinancialTrends"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/vs-industry": {
+      "get": {
+        "summary": "Industry Comparison",
+        "description": "Compare a company's financial metrics against its industry averages based on SIC classification.",
+        "operationId": "industryComparison",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Industry comparison",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndustryComparison"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/segments": {
+      "get": {
+        "summary": "Revenue Segments",
+        "description": "Get revenue breakdown by segment/product line for a company.",
+        "operationId": "getRevenueSegments",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Revenue segments"
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/income-statement": {
+      "get": {
+        "summary": "Income Statement",
+        "description": "Get detailed income statement data including revenue, cost of goods sold, operating expenses, net income, and earnings per share.",
+        "operationId": "getIncomeStatement",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Income statement data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinancialStatement"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/balance-sheet": {
+      "get": {
+        "summary": "Balance Sheet",
+        "description": "Get detailed balance sheet data including assets, liabilities, and shareholders' equity.",
+        "operationId": "getBalanceSheet",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance sheet data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinancialStatement"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/cash-flow": {
+      "get": {
+        "summary": "Cash Flow Statement",
+        "description": "Get detailed cash flow statement including operating, investing, and financing activities.",
+        "operationId": "getCashFlow",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cash flow data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinancialStatement"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/full": {
+      "get": {
+        "summary": "All Financial Data",
+        "description": "Get ALL financial data for a company in one call \u2014 health, income statement, balance sheet, cash flow, trends, and profile. The fastest way to get a complete picture.",
+        "operationId": "getAllFinancialData",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Complete financial data bundle"
+          }
+        },
+        "x-rapidapi-name": "All Financial Data"
+      }
+    },
+    "/v1/financial/{ticker}/profile": {
+      "get": {
+        "summary": "Company Profile",
+        "description": "Get company profile including sector, industry, employees, business address, website, and SEC identifiers.",
+        "operationId": "getCompanyProfile",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyProfile"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/filing-types": {
+      "get": {
+        "summary": "Filing Types",
+        "description": "Get available SEC filing types (10-K, 10-Q, 8-K, etc.) for a company with counts and most recent dates.",
+        "operationId": "getFilingTypes",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available filing types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilingTypes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/filings/search": {
+      "get": {
+        "summary": "Search SEC Filings",
+        "description": "Search SEC filings for a company by form type (10-K, 10-Q, 8-K) with optional count limit.",
+        "operationId": "searchFilings",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          },
+          {
+            "name": "form_types",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated form types (e.g. '10-K,10-Q')",
+            "example": "10-K"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of results to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filings search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilingsSearch"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/insider": {
+      "get": {
+        "summary": "Insider Trades",
+        "description": "Get recent insider trading activity for a company \u2014 directors and executives buying/selling shares.",
+        "operationId": "getInsiderTrades",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "description": "Number of trades to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Insider trading data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsiderTrades"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/{ticker}/sentiment": {
+      "get": {
+        "summary": "Sentiment Analysis",
+        "description": "Get sentiment analysis from SEC filings for a company \u2014 positive/negative/neutral signals and risk factors extracted from 10-K, 10-Q, and 8-K filings.",
+        "operationId": "getSentiment",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          },
+          {
+            "name": "filing",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filing type to analyze (10-K, 10-Q, 8-K)",
+            "example": "10-K"
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filing year to analyze"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sentiment analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SentimentAnalysis"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/compare": {
+      "post": {
+        "summary": "Compare Companies",
+        "description": "Compare financial metrics across multiple companies side by side.",
+        "operationId": "compareCompanies",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tickers"
+                ],
+                "properties": {
+                  "tickers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Array of ticker symbols to compare",
+                    "example": [
+                      "AAPL",
+                      "MSFT",
+                      "GOOGL"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Side-by-side comparison"
+          }
+        }
+      }
+    },
+    "/v1/financial/screener": {
+      "post": {
+        "summary": "Screen Companies",
+        "description": "Screen/filter companies by financial criteria \u2014 find companies matching specific metrics like minimum profit margin, revenue growth, debt ratio, or health grade.",
+        "operationId": "screenCompanies",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "min_profit_margin": {
+                    "type": "number",
+                    "description": "Minimum profit margin (e.g. 0.15 for 15%)"
+                  },
+                  "min_revenue_growth": {
+                    "type": "number",
+                    "description": "Minimum revenue growth rate"
+                  },
+                  "max_debt_ratio": {
+                    "type": "number",
+                    "description": "Maximum debt-to-equity ratio"
+                  },
+                  "min_grade": {
+                    "type": "string",
+                    "description": "Minimum health grade (A, B, C, D, F)"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "default": 20
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Screener results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenerResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/financial/batch": {
+      "post": {
+        "summary": "Batch Query",
+        "description": "Query multiple endpoints for multiple tickers in a single batch request \u2014 the fastest way to get bulk data.",
+        "operationId": "batchQuery",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tickers",
+                  "endpoints"
+                ],
+                "properties": {
+                  "tickers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "AAPL",
+                      "MSFT"
+                    ]
+                  },
+                  "endpoints": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Endpoint names e.g. ['income-statement', 'health', 'insider']",
+                    "example": [
+                      "health",
+                      "profile"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch query results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchQuery"
+                }
+              }
+            }
+          }
+        },
+        "x-rapidapi-name": "Batch Query"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Full API documentation",
+    "url": "https://slacking.biz/docs"
+  },
+  "x-rapidapi-category": "Financial"
+}

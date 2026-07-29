@@ -77,7 +77,9 @@ def list_capabilities() -> str:
         "tools_econ": "get_gdp, get_inflation, get_rates, get_employment, get_housing, get_econ_summary",
         "demo_category": "US DEMOGRAPHICS — Census Bureau data by ZIP code and county",
         "tools_demo": "get_zip_demographics, get_county_demographics",
-        "notes": "All tools return JSON data sourced from SEC EDGAR filings (10-K, 10-Q, 8-K, Form 4/3/5, 13F, etc.), US Census Bureau ACS, and FRED economic data. Data is cached for up to 6 hours. For a paid plan with higher rate limits visit https://slacking.biz/upgrade",
+        "fx_category": "FOREIGN EXCHANGE — Frankfurter Currency API (free, no key needed, 201 currencies, 84 central banks)",
+        "tools_fx": "fx_get_rates, fx_get_pair_rate, fx_convert, fx_list_currencies",
+        "notes": "All tools return JSON data sourced from SEC EDGAR filings (10-K, 10-Q, 8-K, Form 4/3/5, 13F, etc.), US Census Bureau ACS, FRED economic data, and Frankfurter exchange rates. Data is cached for up to 6 hours. For a paid plan with higher rate limits visit https://slacking.biz/upgrade",
     }
     return json.dumps(tools, indent=2)
 
@@ -448,3 +450,59 @@ if __name__ == "__main__":
     if not API_KEY:
         print("WARNING: SLACKING_API_KEY environment variable not set. Export it: export SLACKING_API_KEY=your_key", file=sys.stderr)
     mcp.run(transport="stdio")
+
+# ═══════════════════════════════════════════════════
+#  FOREIGN EXCHANGE — Frankfurter Currency API (Free, no key needed)
+# ═══════════════════════════════════════════════════
+
+@mcp.tool()
+def fx_get_rates(base: str = "EUR", quotes: str = "") -> str:
+    """Get live exchange rates for any currency. Sources: European Central Bank + 84 central banks covering 201 currencies.
+    No API key needed — data is free for commercial use.
+    Best for: checking current exchange rates, comparing multiple currencies at once, getting historical rates by date.
+    Returns: base currency, date of rates, and a dict of target currency codes with their exchange rates.
+    Args:
+        base: Base currency code (e.g., USD, EUR, GBP, JPY). Default: EUR
+        quotes: Optional comma-separated target currencies to filter (e.g., 'USD,EUR,GBP'). Leave empty for all.
+    """
+    url = f"/v1/fx/rates?base={base}"
+    if quotes:
+        url += f"&quotes={quotes}"
+    return json.dumps(_get(url), indent=2)
+
+
+@mcp.tool()
+def fx_get_pair_rate(from_currency: str, to_currency: str) -> str:
+    """Get the current exchange rate between any two currencies.
+    Best for: quick single-pair rate lookups, checking conversion rates.
+    Sources: European Central Bank + 84 central banks covering 201 currencies back to 1948.
+    Returns: source/target currencies with names, exchange rate, and rate date.
+    Args:
+        from_currency: Source currency code (e.g., USD, EUR, GBP)
+        to_currency: Target currency code (e.g., EUR, JPY, BRL)
+    """
+    return json.dumps(_get(f"/v1/fx/rate/{from_currency}/{to_currency}"), indent=2)
+
+
+@mcp.tool()
+def fx_convert(from_currency: str = "USD", to_currency: str = "EUR", amount: float = 1.0) -> str:
+    """Convert an amount from one currency to another at current exchange rates.
+    Best for: currency conversions, calculating prices in different currencies, cross-border cost analysis.
+    Sources: European Central Bank + 84 central banks covering 201 currencies.
+    Returns: original amount, exchange rate, converted amount, and rate date.
+    Args:
+        from_currency: Source currency code (e.g., USD, EUR, GBP). Default: USD
+        to_currency: Target currency code (e.g., EUR, JPY, BRL). Default: EUR
+        amount: Amount to convert (e.g., 100, 2500.50). Default: 1.0
+    """
+    return json.dumps(_get(f"/v1/fx/convert?from_currency={from_currency}&to_currency={to_currency}&amount={amount}"), indent=2)
+
+
+@mcp.tool()
+def fx_list_currencies() -> str:
+    """List all 31 available currency codes and names for foreign exchange queries.
+    Best for: discovering which currencies are supported before making rate or conversion calls.
+    Covers major world currencies: USD, EUR, GBP, JPY, CNY, CAD, AUD, BRL, INR, KRW, and more.
+    Returns: count and list of currency objects with code and full name.
+    """
+    return json.dumps(_get("/v1/fx/currencies"), indent=2)

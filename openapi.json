@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "slacking.biz SEC Financial Data API",
-    "description": "SEC financial data, US economic indicators, and demographics — health scores, income statements, balance sheets, cash flow, insider trades, sentiment analysis, industry comparison, filings search, company screening, GDP, inflation, interest rates, employment, housing, ZIP code and county demographics. Data sourced from SEC EDGAR (10-K, 10-Q, 8-K, Form 4), FRED (Federal Reserve Economic Data), and US Census Bureau ACS.",
-    "version": "1.0.0",
+    "title": "slacking.biz SEC Financial Data + FX API",
+    "description": "SEC financial data, US economic indicators, demographics, and foreign exchange rates — health scores, income statements, balance sheets, cash flow, insider trades, sentiment analysis, industry comparison, filings search, company screening, GDP, inflation, interest rates, employment, housing, ZIP code and county demographics, and FX rates/conversion from Frankfurter (ECB + 84 central banks, 201 currencies, free for commercial use). Data sourced from SEC EDGAR (10-K, 10-Q, 8-K, Form 4), FRED (Federal Reserve Economic Data), US Census Bureau ACS, and Frankfurter (European Central Bank).",
+    "version": "1.2.0",
     "contact": {
       "name": "slacking.biz Support",
       "email": "admin@tsn.pw",
@@ -1131,6 +1131,156 @@
         "responses": {
           "200": {
             "description": "County demographics"
+          }
+        }
+      }
+    },
+    "/v1/fx/rates": {
+      "get": {
+        "summary": "Exchange Rates",
+        "description": "Get current or historical exchange rates from the Frankfurter API (European Central Bank + 84 central banks, 201 currencies). No API key required. Free for commercial use.",
+        "operationId": "getFxRates",
+        "parameters": [
+          {
+            "name": "base",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "EUR"
+            },
+            "description": "Base currency code (e.g., USD, EUR, GBP)",
+            "example": "USD"
+          },
+          {
+            "name": "quotes",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated target currencies to filter (e.g., USD,EUR,GBP)"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Date for historical rates in YYYY-MM-DD format"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchange rates"
+          }
+        }
+      }
+    },
+    "/v1/fx/rate/{from_currency}/{to_currency}": {
+      "get": {
+        "summary": "Currency Pair Rate",
+        "description": "Get the exchange rate between any two currencies. Sources: ECB + 84 central banks. Free for commercial use.",
+        "operationId": "getFxPairRate",
+        "parameters": [
+          {
+            "name": "from_currency",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Source currency code (e.g., USD, EUR, GBP)",
+            "example": "USD"
+          },
+          {
+            "name": "to_currency",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Target currency code (e.g., EUR, JPY, BRL)",
+            "example": "EUR"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Date for historical rate in YYYY-MM-DD format"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Currency pair rate"
+          }
+        }
+      }
+    },
+    "/v1/fx/convert": {
+      "get": {
+        "summary": "Currency Conversion",
+        "description": "Convert an amount from one currency to another at current exchange rates. Sources: ECB + 84 central banks. Free for commercial use.",
+        "operationId": "getFxConvert",
+        "parameters": [
+          {
+            "name": "from_currency",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "USD"
+            },
+            "description": "Source currency code (e.g., USD, EUR, GBP)",
+            "example": "USD"
+          },
+          {
+            "name": "to_currency",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "EUR"
+            },
+            "description": "Target currency code (e.g., EUR, JPY, BRL)",
+            "example": "EUR"
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "default": 1.0
+            },
+            "description": "Amount to convert",
+            "example": 100
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Date for historical rate in YYYY-MM-DD format"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Converted amount"
+          }
+        }
+      }
+    },
+    "/v1/fx/currencies": {
+      "get": {
+        "summary": "List Currencies",
+        "description": "Get list of all 31 available currency codes and names for foreign exchange queries. Covers USD, EUR, GBP, JPY, CNY, and more.",
+        "operationId": "getFxCurrencies",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of currencies"
           }
         }
       }
